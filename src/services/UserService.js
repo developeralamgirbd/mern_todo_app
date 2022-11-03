@@ -33,3 +33,7 @@ exports.userFindByEmail = async (email)=>{
 exports.userUpdateAfterVerifyEmail = async (email)=>{
 	return await User.updateOne({email}, {$set: {verified: true, status: 'active', confirmationToken: ''}});
 }
+
+exports.confirmationTokenReset = async (email, token, date)=>{
+	return await User.updateOne({email}, {$set: {confirmationToken: token, confirmationTokenExpire: date}});
+}
