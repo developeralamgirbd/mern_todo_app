@@ -1,6 +1,6 @@
 const {expressjwt} = require('express-jwt');
 
-exports.authVerify = expressjwt({
+exports.AuthVerifyMiddleware = expressjwt({
     secret: process.env.TOKEN_SECRET,
     algorithms: ["HS256"]
 })
