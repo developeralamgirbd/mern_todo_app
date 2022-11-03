@@ -27,5 +27,9 @@ exports.userProfileUpdateService = async (_id, Request)=>{
 }
 
 exports.userFindByEmail = async (email)=>{
-	return await User.findOne({email}, {email: 1, confirmationToken: 1, confirmationTokenExpire: 1, _id:0})
+	return await User.findOne({email}, {password:0, _id:0});
+}
+
+exports.userUpdateAfterVerifyEmail = async (email)=>{
+	return await User.updateOne({email}, {$set: {verified: true, status: 'active', confirmationToken: ''}});
 }

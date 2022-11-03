@@ -47,10 +47,17 @@ exports.login = async (req, res) => {
 			})
 		}
 
+		if (!user.verified){
+			return res.status(400).json({
+				status: 'fail',
+				error: 'Your account is not verified. please verify your account'
+			})
+		}
+
 		if(user.status !== 'active'){
 			return res.status(400).json({
 				status: 'fail',
-				error: 'Your account is not active. please verify your account'
+				error: 'Your account is not active. please contact Administrator'
 			})
 		}
 
@@ -157,15 +164,16 @@ exports.emailVerify = async (req, res)=>{
 			expire: user.confirmationTokenExpire.getMinutes()
 		})
 	}
-	if (currentTime >= expireTime){
-		user.confirmationToken = undefined;
-	}
+	/*const verified = user.verified = true;
+	const status = user.status = 'active';
+	const confirmationToken = user.confirmationToken = undefined;*/
 
-	res.json({
-		email,
-		token,
-		currentDate: currentTime,
-		expireDate: user.confirmationTokenExpire.getMinutes(),
+	const userEmail = user.email;
+	await UserService.userUpdateAfterVerifyEmail(userEmail);
+
+	res.status(200).json({
+		status: 'success',
+		message: 'Email verified successfully'
 	});
 }
 
