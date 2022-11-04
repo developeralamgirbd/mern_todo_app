@@ -26,14 +26,8 @@ exports.userProfileUpdateService = async (_id, Request)=>{
 	return updatedUser;
 }
 
-exports.userFindByEmail = async (email)=>{
-	return await User.findOne({email}, {password:0, _id:0});
-}
-
 exports.userUpdateAfterVerifyEmail = async (email)=>{
 	return await User.updateOne({email}, {$set: {verified: true, status: 'active', confirmationToken: ''}});
 }
 
-exports.confirmationTokenReset = async (email, token, date)=>{
-	return await User.updateOne({email}, {$set: {confirmationToken: token, confirmationTokenExpire: date}});
-}
+

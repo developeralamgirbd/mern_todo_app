@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const sendEmail = async (EmailTo, EmailText, EmailSubject, Token)=>{
+const sendEmail = async (EmailTo, EmailText, EmailSubject, Token, URL)=>{
     let transport = nodemailer.createTransport({
         host: "smtp.mailtrap.io",
         port: 2525,
@@ -11,7 +11,7 @@ const sendEmail = async (EmailTo, EmailText, EmailSubject, Token)=>{
             pass: process.env.EMAIL_PASS
         }
     });
-    const verifyUrl = `http://localhost:${process.env.PORT}/api/v1/email-verify/${EmailTo}/${Token}`;
+    const verifyUrl = `${process.env.BASE_URL}/${URL}/${EmailTo}/${Token}`;
     const template = `<div style="background: aliceblue; border: 0.5px solid gray; padding: 10px">
         <h4>${EmailText}</h4>
         <div style="text-align: center">

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
+const generateToken = require('../helper/generateToken');
 
 const userSchema = mongoose.Schema({
 	email: {
@@ -85,6 +85,7 @@ const userSchema = mongoose.Schema({
 	passwordChangedAt: Date,
 	passwordResetToken: String,
 	passwordResetExpires: Date,
+
 	verified: {
 		type: Boolean,
 		default: false
@@ -106,7 +107,9 @@ userSchema.pre('save', function(next){
 
 
 userSchema.methods.generateConfirmationToken = function(){
-	const token = crypto.randomBytes(32).toString('hex');
+	// const token = crypto.randomBytes(32).toString('hex');
+	const token = generateToken();
+
 	this.confirmationToken = token;
 	const expireTime = parseInt(process.env.CONFIRMATION_TOKEN_EXPIRE_TIME);
 	let date = new Date();
@@ -114,6 +117,9 @@ userSchema.methods.generateConfirmationToken = function(){
 	this.confirmationTokenExpire = date;
 	return token;
 };
+
+
+
 
 userSchema.methods.comparePassword = function(password, hash){
 	const isPasswordValid = bcrypt.compareSync(password, hash);
