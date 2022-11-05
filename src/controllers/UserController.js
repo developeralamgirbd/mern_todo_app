@@ -254,8 +254,9 @@ exports.resetPassword = async (req, res)=>{
 				error: 'User not found'
 			})
 		}
-		const token = generateToken;
-		const expireTime = parseInt(process.env.CONFIRMATION_TOKEN_EXPIRE_TIME);
+
+		const token = await generateToken;
+		const expireTime = parseInt(process.env.PASSWORD_RESET_TOKEN_EXPIRE_TIME);
 		let date = new Date();
 		date.setMinutes( date.getMinutes() + expireTime);
 
@@ -281,6 +282,80 @@ exports.resetPassword = async (req, res)=>{
 	}
 }
 
-exports.passwordChange = async (req, res)=>{
+exports.newPasswordCreate = async (req, res)=>{
+	try {
+		const email = req.params.email;
+		const token = req.params.token;
 
+		res.status(200).json({
+			status: 'Success',
+			email,
+			token
+		})
+
+	}catch (error) {
+		res.status(500).json({
+			status: 'fail',
+			error
+		});
+	}
+}
+
+exports.updatePassword = async (req, res)=>{
+	try {
+		const email = req.body.email;
+		const token = req.body.token;
+		const password = req.body.password;
+		const confirmPassword = req.body.confirmPassword;
+
+		/*res.status(200).json({
+			password,
+			confirmPassword
+		})*/
+
+		const user = await userFindByEmail(email)
+
+		if (!user){
+			return res.status(400).json({
+				status: 'fail',
+				error: 'User not found'
+			});
+		}
+		/*if (password !== confirmPassword){
+			return res.status(400).json({
+				status: 'fail',
+				error: "Password doesn't match"
+			});
+		}*/
+		if (token !== user.passwordResetToken){
+			return res.status(400).json({
+				status: 'fail',
+				error: 'Invalid token'
+			});
+		}
+		const currentTime = new Date();
+		const expireTime = user.passwordResetExpires;
+
+		// Checked whether current time is greater than or equal to token expiration date
+		if (currentTime.getTime() >= expireTime){
+			return res.status(400).json({
+				status: 'fail',
+				error: 'Token expired',
+			})
+		}
+		const hashPassword = user.hashPassword(password);
+
+		await UserService.updatePassword(user._id, hashPassword);
+
+		res.status(200).json({
+			status: 'success',
+			message: 'Password changed successfully'
+		});
+
+	}catch (error) {
+		res.status(500).json({
+			status: 'fail',
+			error
+		});
+	}
 }

@@ -21,13 +21,20 @@ exports.userProfileUpdateService = async (_id, Request)=>{
 			 email: Request.body.email,
 			 firstName: Request.body.firstName,
 			 lastName: Request.body.lastName,
-			 password: Request.body.password
 		 }}, {runValidators: true});
 	return updatedUser;
 }
 
 exports.userUpdateAfterVerifyEmail = async (email)=>{
 	return await User.updateOne({email}, {$set: {verified: true, status: 'active', confirmationToken: ''}});
+}
+
+exports.updatePassword = async (_id, hashPassword) => {
+	return await User.updateOne({_id}, {$set: {
+			password: hashPassword,
+			passwordChangedAt: new Date(),
+			passwordResetToken: ""
+		}, $unset: {password: 1}}, {runValidators: true});
 }
 
 

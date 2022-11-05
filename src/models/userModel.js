@@ -66,7 +66,7 @@ const userSchema = mongoose.Schema({
 	},
 	confirmPassword: {
 		type: String,
-		required: [true, 'Confirm Password is requires'],
+		required: [true, 'Confirm Password is required'],
 		validate: {
 			validator: function(value){
 				return value === this.password
@@ -124,6 +124,10 @@ userSchema.methods.generateConfirmationToken = function(){
 userSchema.methods.comparePassword = function(password, hash){
 	const isPasswordValid = bcrypt.compareSync(password, hash);
 	return isPasswordValid;
+}
+
+userSchema.methods.hashPassword = function(password){
+	return  bcrypt.hashSync(password);
 }
 
 
