@@ -34,7 +34,7 @@ exports.updatePassword = async (_id, hashPassword) => {
 			password: hashPassword,
 			passwordChangedAt: new Date(),
 			passwordResetToken: ""
-		}, $unset: {password: 1}}, {runValidators: true});
+		}});
 }
 
 

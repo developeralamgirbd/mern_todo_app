@@ -4,6 +4,7 @@ const sendEmail = require('../helper/sendEmail');
 const generateToken = require('../helper/generateToken');
 const {updateTokenAndDate} = require('../services/common/updateTokenAndDate');
 const {userFindByEmail} = require("../services/common/userFindByEmail");
+const validator = require("validator");
 
 exports.register = async (req, res)=>{
 	try{
@@ -308,10 +309,6 @@ exports.updatePassword = async (req, res)=>{
 		const password = req.body.password;
 		const confirmPassword = req.body.confirmPassword;
 
-		/*res.status(200).json({
-			password,
-			confirmPassword
-		})*/
 
 		const user = await userFindByEmail(email)
 
@@ -321,12 +318,25 @@ exports.updatePassword = async (req, res)=>{
 				error: 'User not found'
 			});
 		}
-		/*if (password !== confirmPassword){
+		const isValidate = validator.isStrongPassword(password, {
+			minLength: 8,
+			minUppercase: 1,
+			minNumbers: 1,
+			minSymbols: 1,
+			minLowercase: 1
+		})
+		if (!isValidate){
+			return res.status(400).json({
+				status: 'fail',
+				error: "Password is not strong, please provide a strong password"
+			});
+		}
+		if (password !== confirmPassword){
 			return res.status(400).json({
 				status: 'fail',
 				error: "Password doesn't match"
 			});
-		}*/
+		}
 		if (token !== user.passwordResetToken){
 			return res.status(400).json({
 				status: 'fail',
