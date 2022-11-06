@@ -10,10 +10,11 @@ exports.register = async (req, res)=>{
 	try{
 		const user = await UserService.registerService(req.body);
 		const token = user.generateConfirmationToken();
-		
+
 		await user.save({ validateBeforeSave: false });
-		const expireTime = parseInt(process.env.CONFIRMATION_TOKEN_EXPIRE_TIME);
-		await sendEmail(user.email, `Token will expire in ${expireTime} minute`, 'Todo App Account Verify', token, 'email-verify');
+
+		// const expireTime = parseInt(process.env.CONFIRMATION_TOKEN_EXPIRE_TIME);
+		// await sendEmail(user.email, `Token will expire in ${expireTime} minute`, 'Todo App Account Verify', token, 'email-verify');
 
 		res.status(200).json({
 			status: 'success',
@@ -21,9 +22,9 @@ exports.register = async (req, res)=>{
 		})
 		
 	}catch(err){
-		res.status(400).json({
+		res.status(500).json({
 			status: 'fail',
-			error: err
+			error: err.message
 		})
 	}
 };

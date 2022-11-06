@@ -108,7 +108,7 @@ userSchema.pre('save', function(next){
 
 userSchema.methods.generateConfirmationToken = function(){
 	// const token = crypto.randomBytes(32).toString('hex');
-	const token = generateToken();
+	const token = generateToken;
 
 	this.confirmationToken = token;
 	const expireTime = parseInt(process.env.CONFIRMATION_TOKEN_EXPIRE_TIME);
