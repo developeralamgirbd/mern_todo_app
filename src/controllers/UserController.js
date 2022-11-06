@@ -13,8 +13,8 @@ exports.register = async (req, res)=>{
 
 		await user.save({ validateBeforeSave: false });
 
-		// const expireTime = parseInt(process.env.CONFIRMATION_TOKEN_EXPIRE_TIME);
-		// await sendEmail(user.email, `Token will expire in ${expireTime} minute`, 'Todo App Account Verify', token, 'email-verify');
+		const expireTime = parseInt(process.env.CONFIRMATION_TOKEN_EXPIRE_TIME);
+		await sendEmail(user.email, `Token will expire in ${expireTime} minute`, 'Todo App Account Verify', token, 'email-verify');
 
 		res.status(200).json({
 			status: 'success',
